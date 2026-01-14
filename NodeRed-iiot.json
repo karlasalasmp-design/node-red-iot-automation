@@ -1,0 +1,4112 @@
+[
+    {
+        "id": "25155530bc7a7727",
+        "type": "tab",
+        "label": "CAMINO DEL SOL",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "g1g2g3g4g5g6g7g8",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar a Telegram",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 910,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "839a48e75f17b8c6",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Sistema en funcionamiento ",
+        "func": "var estadoActual = msg.payload;\nvar estadoAnterior = flow.get(\"estado_sistema\") || null;  // Estado anterior guardado\n\n// Solo continuar si el estado cambió\nif (estadoActual !== estadoAnterior) {\n    flow.set(\"estado_sistema\", estadoActual); // Guardar nuevo estado\n    var chatIds = [6308328731, -1002636358662];\n\n    if (estadoActual === true) {\n        // Sistema en funcionamiento (alerta desactivada)\n        for (var i = 0; i < chatIds.length; i++) {\n            node.send({\n                payload: {\n                    chatId: chatIds[i],\n                    type: \"message\",\n                    content: \"✅ Sistema en funcionamiento Fermentador.\"\n                }\n            });\n        }\n    } else if (estadoActual === false) {\n        // Sistema apagado (alerta activada)\n        for (var i = 0; i < chatIds.length; i++) {\n            node.send({\n                payload: {\n                    chatId: chatIds[i],\n                    type: \"message\",\n                    content: \"🚨 ALERTA ACTIVADA FERMENTADOR\\nSistema apagado.\"\n                }\n            });\n        }\n    }\n}\n\n// Si no hubo cambio de estado, no hacer nada\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 160,
+        "wires": [
+            [
+                "g1g2g3g4g5g6g7g8",
+                "a4040ef866361a5c"
+            ]
+        ]
+    },
+    {
+        "id": "0dce6c939139df16",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar a Telegram",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1250,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "read_temp",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q02",
+        "diff": false,
+        "name": "RUN",
+        "x": 210,
+        "y": 120,
+        "wires": [
+            [
+                "839a48e75f17b8c6",
+                "96870c3836b238ad"
+            ]
+        ]
+    },
+    {
+        "id": "f31640e0f35a381a",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AI4",
+        "diff": true,
+        "name": "",
+        "x": 150,
+        "y": 1780,
+        "wires": [
+            [
+                "5a1fbbf462859c0e"
+            ]
+        ]
+    },
+    {
+        "id": "a4040ef866361a5c",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 18",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "d95b80600d7860c3",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 19",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 1820,
+        "wires": []
+    },
+    {
+        "id": "5a1fbbf462859c0e",
+        "type": "range",
+        "z": "25155530bc7a7727",
+        "minin": "0",
+        "maxin": "1000",
+        "minout": "0",
+        "maxout": "100",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "escalado",
+        "x": 320,
+        "y": 1780,
+        "wires": [
+            [
+                "d95b80600d7860c3",
+                "6601d32a1f32307b"
+            ]
+        ]
+    },
+    {
+        "id": "a0c65447fe7db274",
+        "type": "ui_gauge",
+        "z": "25155530bc7a7727",
+        "name": "Temp AI4",
+        "group": "8fdf45360a1a1c4d",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temp AI4",
+        "label": "Grados",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 540,
+        "y": 1740,
+        "wires": []
+    },
+    {
+        "id": "5e987ae362597f55",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "NI7",
+        "diff": true,
+        "name": "",
+        "x": 1410,
+        "y": 1800,
+        "wires": [
+            [
+                "efdfe489289bbaa7",
+                "fe676ea01f563035"
+            ]
+        ]
+    },
+    {
+        "id": "efdfe489289bbaa7",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 20",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1800,
+        "y": 1800,
+        "wires": []
+    },
+    {
+        "id": "0b3f5d1862609399",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AI3",
+        "diff": true,
+        "name": "",
+        "x": 790,
+        "y": 1760,
+        "wires": [
+            [
+                "83d48495bb8da053"
+            ]
+        ]
+    },
+    {
+        "id": "e9db24f8d9e0cd8e",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 21",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1160,
+        "y": 1800,
+        "wires": []
+    },
+    {
+        "id": "7d66013f8c14b527",
+        "type": "ui_gauge",
+        "z": "25155530bc7a7727",
+        "name": "Temp AI3",
+        "group": "8fdf45360a1a1c4d",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temp AI3",
+        "label": "Grados",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1160,
+        "y": 1720,
+        "wires": []
+    },
+    {
+        "id": "fe676ea01f563035",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 3,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1670,
+        "y": 1760,
+        "wires": []
+    },
+    {
+        "id": "83d48495bb8da053",
+        "type": "range",
+        "z": "25155530bc7a7727",
+        "minin": "0",
+        "maxin": "1000",
+        "minout": "0",
+        "maxout": "100",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "escalado",
+        "x": 960,
+        "y": 1760,
+        "wires": [
+            [
+                "e9db24f8d9e0cd8e",
+                "5837b69a0326ea49"
+            ]
+        ]
+    },
+    {
+        "id": "d323b8e1097deec8",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AI4",
+        "diff": true,
+        "name": "AI4 LOGO",
+        "x": 200,
+        "y": 600,
+        "wires": [
+            [
+                "9bd2469e06a68bf9"
+            ]
+        ]
+    },
+    {
+        "id": "e217e7893b92aa8c",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AI3",
+        "diff": true,
+        "name": "AI3 LOGO",
+        "x": 200,
+        "y": 660,
+        "wires": [
+            [
+                "9bd2469e06a68bf9"
+            ]
+        ]
+    },
+    {
+        "id": "8e07369eda90e15f",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "¿Diferencia > 4?",
+        "func": "if (msg.payload > 4) {\n    // Definir los chatIds a los que se enviará el mensaje\n    var chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n    // Recorremos cada chatId y enviamos el mensaje de alerta\n    for (var i = 0; i < chatIds.length; i++) {\n        msg.payload = {\n            chatId: chatIds[i], // Usamos el chatId de la lista\n            type: \"message\",\n            content: '🚨 ALERTA ACTIVADA\\nDiferencia de temperatura superior a 4 grados'\n        };\n        node.send(msg); // Enviamos el mensaje de alerta\n    }\n    return null; // No necesitamos enviar nada más después del bucle\n} else if (msg.payload < 4) {\n    // Definir los chatIds a los que se enviará el mensaje\n    var chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n    // Recorremos cada chatId y enviamos el mensaje de desactivación\n    for (var i = 0; i < chatIds.length; i++) {\n        msg.payload = {\n            chatId: chatIds[i], // Usamos el chatId de la lista\n            type: \"message\",\n            content: \"✅ ALARMA DESACTIVADA\\nSeñal estable.\"\n        };\n        node.send(msg); // Enviamos el mensaje de desactivación\n    }\n    return null; // No necesitamos enviar nada más después del bucle\n} else {\n    return null; // Si no es mayor que 4 ni menor que 4, no hace nada\n}\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 620,
+        "wires": [
+            [
+                "0dce6c939139df16",
+                "31f4ead0edabbe93"
+            ]
+        ]
+    },
+    {
+        "id": "9bd2469e06a68bf9",
+        "type": "join",
+        "z": "25155530bc7a7727",
+        "name": "Unir AI3 y AI4",
+        "mode": "manual",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": true,
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 480,
+        "y": 620,
+        "wires": [
+            [
+                "2967b5647b9d984a"
+            ]
+        ]
+    },
+    {
+        "id": "2967b5647b9d984a",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Escalar y Diferencia",
+        "func": "var ai3 = Number(msg.payload.AI3);\nvar ai4 = Number(msg.payload.AI4);\n\nif (isNaN(ai3) || isNaN(ai4)) {\n    node.error(\"AI3 o AI4 no definidos correctamente\");\n    return null;\n}\n\n// Escalar de 0–1023 a 0–100\nvar scaled_ai3 = (ai3 * 100) / 1023;\nvar scaled_ai4 = (ai4 * 100) / 1023;\n\n// Calcular diferencia\nvar diff = Math.abs(scaled_ai3 - scaled_ai4);\n\nmsg.payload = {\n    AI3: ai3,\n    AI4: ai4,\n    AI3_escalado: scaled_ai3,\n    AI4_escalado: scaled_ai4,\n    Diferencia: diff\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 620,
+        "wires": [
+            [
+                "8e07369eda90e15f"
+            ]
+        ]
+    },
+    {
+        "id": "42ed08742227eb5a",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar a Telegram",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 750,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3b32e8526e5d40f1",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Evaluar señal y enviar alarma",
+        "func": "if (msg.payload === true) {\n    // Definir los chatIds a los que se enviará el mensaje\n    var chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n    // Recorremos cada chatId y enviamos el mensaje con la foto\n    for (var i = 0; i < chatIds.length; i++) {\n        msg.payload = {\n            chatId: chatIds[i], // Usamos el chatId de la lista\n            type: \"photo\",\n            content: \"Downloads/ALERTA.jpg\", // Ruta local a la imagen\n            caption: \"🚨 ALERTA ACTIVADA FERMENTADOR\\nDiferencial de Temp mayor a 4°C\\nChiller Fermentador\"\n        };\n        node.send(msg); // Enviamos el mensaje con la foto\n    }\n    return null; // No necesitamos enviar nada más después del bucle\n} else {\n    return null; // Si no es 1 ni 0, no hace nada\n}\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 440,
+        "wires": [
+            [
+                "42ed08742227eb5a",
+                "f01dc2a8976bb07e"
+            ]
+        ]
+    },
+    {
+        "id": "460957a51703b29d",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q01",
+        "diff": true,
+        "name": "DIFERENCIAL TEMP FERM",
+        "x": 200,
+        "y": 380,
+        "wires": [
+            [
+                "3b32e8526e5d40f1",
+                "ab8614eeeae65d19"
+            ]
+        ]
+    },
+    {
+        "id": "f01dc2a8976bb07e",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 23",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "c0ae6cd84f36c94f",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar a Telegram",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 850,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5128831462ba6ac2",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Evaluar señal y enviar alarma",
+        "func": "if (msg.payload === true) {\n    // Definir los chatIds a los que se enviará el mensaje\n    var chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n    // Recorremos cada chatId y enviamos el mensaje de alerta con la imagen\n    for (var i = 0; i < chatIds.length; i++) {\n        msg.payload = {\n            chatId: chatIds[i], // Usamos el chatId de la lista\n            type: \"photo\",\n            content: \"Downloads/ALERTA.jpg\", // 🔁 Ruta local a la imagen\n            caption: \"🚨ALERTA ACTIVADA FERMENTADOR\\nTemperatura seteada fuera de rango.\"\n        };\n        node.send(msg); // Enviamos el mensaje de alerta\n    }\n    return null; // No necesitamos enviar nada más después del bucle\n} else {\n    return null; // Si no es true ni false, no hace nada\n}\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 800,
+        "wires": [
+            [
+                "c0ae6cd84f36c94f",
+                "26a386ceb37e49bb"
+            ]
+        ]
+    },
+    {
+        "id": "1cb5a21389b16385",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q07",
+        "diff": true,
+        "name": "ALARMA SET_TEMP",
+        "x": 240,
+        "y": 800,
+        "wires": [
+            [
+                "5128831462ba6ac2",
+                "bfa15b026d6959c5"
+            ]
+        ]
+    },
+    {
+        "id": "26a386ceb37e49bb",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 24",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "31f4ead0edabbe93",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 25",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1220,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "1440d06b83ba382a",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 210,
+        "y": 440,
+        "wires": [
+            [
+                "3b32e8526e5d40f1",
+                "ab8614eeeae65d19"
+            ]
+        ]
+    },
+    {
+        "id": "ecaa4c4c61ee4058",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 210,
+        "y": 480,
+        "wires": [
+            [
+                "ab8614eeeae65d19"
+            ]
+        ]
+    },
+    {
+        "id": "c8afc1b969d8f8ae",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 170,
+        "y": 220,
+        "wires": [
+            [
+                "839a48e75f17b8c6",
+                "96870c3836b238ad"
+            ]
+        ]
+    },
+    {
+        "id": "04e497f804fde2ba",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "839a48e75f17b8c6"
+            ]
+        ]
+    },
+    {
+        "id": "b61233804b41cc82",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AQ4",
+        "diff": true,
+        "name": "SYS_RET",
+        "x": 1240,
+        "y": 1920,
+        "wires": [
+            [
+                "a8d674b834ca3d60"
+            ]
+        ]
+    },
+    {
+        "id": "f9732f78fe128514",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AQ7",
+        "diff": true,
+        "name": "ENVIRONMENT",
+        "x": 1280,
+        "y": 2020,
+        "wires": [
+            [
+                "4e94236c26dc81e3"
+            ]
+        ]
+    },
+    {
+        "id": "b8dc1d0653cd4cf7",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 3,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Temp ambiente",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1660,
+        "y": 2020,
+        "wires": []
+    },
+    {
+        "id": "6ca4f471621958ea",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 22",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1620,
+        "y": 2060,
+        "wires": []
+    },
+    {
+        "id": "082d77dfc6e664b7",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AQ5",
+        "diff": true,
+        "name": "SET_TEMP",
+        "x": 170,
+        "y": 1960,
+        "wires": [
+            [
+                "35998525ec8cb92b"
+            ]
+        ]
+    },
+    {
+        "id": "de9ac3ecbc1af71f",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 3,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Temp seteada",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 780,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "ea7a7711d0f1df65",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 30",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 1960,
+        "wires": []
+    },
+    {
+        "id": "ee9041b950f0671f",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AQ3",
+        "diff": true,
+        "name": "SYS_OUT",
+        "x": 160,
+        "y": 2060,
+        "wires": [
+            [
+                "9e285ef995367cca"
+            ]
+        ]
+    },
+    {
+        "id": "1e4ae21c5a1e3dd1",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 3,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Temp salida",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 750,
+        "y": 2060,
+        "wires": []
+    },
+    {
+        "id": "1e0f4017a4f96547",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 31",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 2120,
+        "wires": []
+    },
+    {
+        "id": "4e94236c26dc81e3",
+        "type": "range",
+        "z": "25155530bc7a7727",
+        "minin": "0",
+        "maxin": "1000",
+        "minout": "0",
+        "maxout": "100",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "escalado",
+        "x": 1460,
+        "y": 2020,
+        "wires": [
+            [
+                "6ca4f471621958ea",
+                "b8dc1d0653cd4cf7"
+            ]
+        ]
+    },
+    {
+        "id": "9e285ef995367cca",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 3",
+        "func": "var valor = msg.payload;\nif (valor > 32767) {\n    valor = valor - 65536;\n}\nmsg.payload = valor;\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2060,
+        "wires": [
+            [
+                "cdd2d10754847938"
+            ]
+        ]
+    },
+    {
+        "id": "35998525ec8cb92b",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 4",
+        "func": "var valor = msg.payload;\nif (valor > 32767) {\n    valor = valor - 65536;\n}\nmsg.payload = valor;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1960,
+        "wires": [
+            [
+                "3dbcac3029738080"
+            ]
+        ]
+    },
+    {
+        "id": "3dbcac3029738080",
+        "type": "range",
+        "z": "25155530bc7a7727",
+        "minin": "0",
+        "maxin": "100",
+        "minout": "0",
+        "maxout": "10",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "escalado",
+        "x": 560,
+        "y": 1960,
+        "wires": [
+            [
+                "ea7a7711d0f1df65",
+                "de9ac3ecbc1af71f"
+            ]
+        ]
+    },
+    {
+        "id": "cdd2d10754847938",
+        "type": "range",
+        "z": "25155530bc7a7727",
+        "minin": "0",
+        "maxin": "100",
+        "minout": "0",
+        "maxout": "10",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "escalado",
+        "x": 560,
+        "y": 2060,
+        "wires": [
+            [
+                "1e0f4017a4f96547",
+                "1e4ae21c5a1e3dd1"
+            ]
+        ]
+    },
+    {
+        "id": "874077b594526b65",
+        "type": "telegram command",
+        "z": "25155530bc7a7727",
+        "name": "Comando /menu",
+        "command": "/menu",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "bot": "2095f41376c7be0b",
+        "strict": false,
+        "hasresponse": false,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 1,
+        "x": 180,
+        "y": 2520,
+        "wires": [
+            [
+                "da955accc817ab47"
+            ]
+        ]
+    },
+    {
+        "id": "da955accc817ab47",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Mostrar Menú",
+        "func": "// Lista de chatIds a los que se enviará el mensaje\nvar chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n// Recorremos cada chatId y enviamos el mensaje con el teclado interactivo\nfor (var i = 0; i < chatIds.length; i++) {\n    msg.payload = {\n        chatId: chatIds[i], // Usamos el chatId de la lista\n        type: \"message\",\n        content: \"📋 *Menú Principal*\\nSelecciona una opción:\",\n        options: {\n            reply_markup: JSON.stringify({\n                keyboard: [[\"📊 Estado del Sistema\"], [\"🚨 Estado de Alarmas\"], [\"❌ Cancelar\"]],\n                resize_keyboard: true,\n                one_time_keyboard: true\n            }),\n            parse_mode: \"Markdown\"\n        }\n    };\n    node.send(msg); // Enviamos el mensaje con el teclado interactivo\n}\nreturn null; // No necesitamos enviar nada más después del bucle\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 2520,
+        "wires": [
+            [
+                "88edf118df78d7ac"
+            ]
+        ]
+    },
+    {
+        "id": "88edf118df78d7ac",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1010,
+        "y": 2620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0007c3959ce64a6e",
+        "type": "telegram receiver",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "bot": "2095f41376c7be0b",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 190,
+        "y": 2640,
+        "wires": [
+            [
+                "141a40a61830589f"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "141a40a61830589f",
+        "type": "switch",
+        "z": "25155530bc7a7727",
+        "name": "Opciones del Menú",
+        "property": "payload.content",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "📊 Estado del Sistema",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "🚨 Estado de Alarmas",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "❌ Cancelar",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 450,
+        "y": 2640,
+        "wires": [
+            [
+                "ddc8988d81ac2f08"
+            ],
+            [
+                "4eaefee51ba3cdd9"
+            ],
+            [
+                "c345a6c732b295c6"
+            ]
+        ]
+    },
+    {
+        "id": "4eaefee51ba3cdd9",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Mostrar Alarmas Q",
+        "func": "const Q01 = flow.get(\"Q01\") ?? 0;\nconst Q02 = flow.get(\"Q02\") ?? 0;\nconst Q03 = flow.get(\"Q03\") ?? 0;\nconst Q04 = flow.get(\"Q04\") ?? 0;\nconst Q06 = flow.get(\"Q06\") ?? 0;\nconst Q07 = flow.get(\"Q07\") ?? 0;\n\n// Lista de chatIds a los que se enviará el mensaje\nvar chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n// Recorremos cada chatId y enviamos el mensaje con el estado del sistema\nfor (var i = 0; i < chatIds.length; i++) {\n    msg.payload = {\n        chatId: chatIds[i], // Usamos el chatId de la lista\n        type: \"message\",\n        content: `📊 Estado del sistema de alarmas:\\n\n        chiller Fermentador\\n\n        🔸 Diferencial Temp: ${Q01}\\n\n        🔸 Run: ${Q02}\\n\n        🔸 Diferencial Temp P100: ${Q03}\\n\n        🔸 Alarma Grupo 1: ${Q04}\\n\n        🔸 Alarma Grupo 2: ${Q06}\\n\n        🔸 Alarma Temp Seteada: ${Q07}`\n    };\n    node.send(msg); // Enviamos el mensaje con el estado del sistema\n}\nreturn null; // No necesitamos enviar nada más después del bucle\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 2640,
+        "wires": [
+            [
+                "88edf118df78d7ac"
+            ]
+        ]
+    },
+    {
+        "id": "c345a6c732b295c6",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Cancelar",
+        "func": "// Lista de chatIds a los que se enviará el mensaje\nvar chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n// Recorremos cada chatId y enviamos el mensaje de agradecimiento\nfor (var i = 0; i < chatIds.length; i++) {\n    msg.payload = {\n        chatId: chatIds[i], // Usamos el chatId de la lista\n        type: \"message\",\n        content: \"✅ Gracias por usar el sistema. ¡Hasta pronto!\"\n    };\n    node.send(msg); // Enviamos el mensaje de agradecimiento\n}\nreturn null; // No necesitamos enviar nada más después del bucle\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 2700,
+        "wires": [
+            [
+                "88edf118df78d7ac"
+            ]
+        ]
+    },
+    {
+        "id": "ddc8988d81ac2f08",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Respuesta a Estado",
+        "func": "const AQ3 = flow.get(\"AQ3\") ?? 0;\nconst AQ4 = flow.get(\"AQ4\") ?? 0;\nconst AQ5 = flow.get(\"AQ5\") ?? 0;\nconst AQ7 = flow.get(\"AQ7\") ?? 0;\nconst AI3 = flow.get(\"AI3\") ?? 0;\nconst AI4 = flow.get(\"AI4\") ?? 0;\nconst AM1 = flow.get(\"AM1\") ?? 0;\n\n// Obtener la temperatura calculada de AI4 (asegúrate que tu función anterior guarda aquí)\nconst AI4_temp = flow.get(\"AI4_temperature\") ?? 0;\nconst AI3_temp = flow.get(\"AI3_temperature\") ?? 0;\n\n\n// Lista de chatIds a los que se enviará el mensaje\nvar chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n// Recorremos cada chatId y enviamos el mensaje con el estado del sistema\nfor (var i = 0; i < chatIds.length; i++) {\n    msg.payload = {\n        chatId: chatIds[i], // Usamos el chatId de la lista\n        type: \"message\",\n        content: `📊 Estado del sistema:\\n\n        Chiller Fermentador\\n\n        🔸 Temp de salida: ${AQ3}°C\\n\n        🔸 Temp de retorno: ${AQ4}°C\\n\n        🔸 Temp seteada: ${AQ5}°C\\n\n        🔸 Temp del ambiente: ${AQ7}°C\\n\n        📊 Estado del sistema:\\n\n        Chiller BBT\\n\n        🔸 Temp de salida: ${AI3_temp.toFixed(1)} °C\\n\n        🔸 Temp de retorno: ${AI4_temp.toFixed(1)} °C\\n`\n    };\n    node.send(msg); // Enviamos el mensaje con el estado del sistema\n}\nreturn null; // No necesitamos enviar nada más después del bucle\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 2580,
+        "wires": [
+            [
+                "88edf118df78d7ac"
+            ]
+        ]
+    },
+    {
+        "id": "61b547eedd71987f",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AQ3",
+        "diff": false,
+        "name": "Leer AQ3",
+        "x": 160,
+        "y": 2220,
+        "wires": [
+            [
+                "8d28c1a035e7dfc3"
+            ]
+        ]
+    },
+    {
+        "id": "2d7e1565d92c8946",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AQ4",
+        "diff": false,
+        "name": "Leer AQ4",
+        "x": 160,
+        "y": 2280,
+        "wires": [
+            [
+                "0dd4a8854d607758"
+            ]
+        ]
+    },
+    {
+        "id": "8d28c1a035e7dfc3",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar AQ3",
+        "func": "var valor = msg.payload;\nif (valor > 32767) {\n    valor = (valor - 65536) / 10;\n}\nmsg.payload = valor;\nflow.set(\"AQ3\", valor);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0dd4a8854d607758",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar AQ4",
+        "func": "var valor = msg.payload;\n\n// Corregir signo si es mayor a 32767 (UInt16 a Int16)\nif (valor > 32767) {\n    valor = valor - 65536;\n}\n\n// Dividir para 10 (escalado real)\nvar valor_real = valor / 10;\n\n// Guardar en flow\nflow.set(\"AQ4\", valor_real);\n\n// Retornar valor ya escalado\nmsg.payload = valor_real;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "551406a50b775e4b",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q01",
+        "diff": false,
+        "name": "Leer Q01",
+        "x": 860,
+        "y": 2220,
+        "wires": [
+            [
+                "7e7ad127cd31b2cb"
+            ]
+        ]
+    },
+    {
+        "id": "b4954a858c77bddc",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q02",
+        "diff": false,
+        "name": "Leer Q02",
+        "x": 860,
+        "y": 2280,
+        "wires": [
+            [
+                "a7bf0c38492a0c19"
+            ]
+        ]
+    },
+    {
+        "id": "c46269213e91d6d7",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q07",
+        "diff": false,
+        "name": "Leer Q07",
+        "x": 1460,
+        "y": 2260,
+        "wires": [
+            [
+                "44e2f7e84ba9174e"
+            ]
+        ]
+    },
+    {
+        "id": "7e7ad127cd31b2cb",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar Q01",
+        "func": "flow.set(\"Q01\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 2220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a7bf0c38492a0c19",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar Q02",
+        "func": "flow.set(\"Q02\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 2280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "40ee8ef4298f7c99",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar Q03",
+        "func": "var ai3 = Number(msg.payload.AI3);\nvar ai4 = Number(msg.payload.AI4);\n\nif (isNaN(ai3) || isNaN(ai4)) {\n    node.error(\"AI3 o AI4 no definidos correctamente\");\n    return null;\n}\n\n// Escalar de 0–1023 a 0–100\nvar scaled_ai3 = (ai3 * 100) / 1023;\nvar scaled_ai4 = (ai4 * 100) / 1023;\n\n// Calcular diferencia\nvar diff = Math.abs(scaled_ai3 - scaled_ai4);\n\n// Evaluar condición\nvar resultado = diff >= 4;\n\n// Guardar en flow si lo necesitas en otro lado\nflow.set(\"Q03\", resultado);\n\n// Preparar mensaje para Telegram\nmsg.payload = {\n    chatId: msg.payload.chatId || null,  // Asegúrate de tener el chatId si viene de Telegram\n    type: \"message\",\n    content: `⚙️ Diferencia de señales: ${diff.toFixed(2)} (Resultado: ${resultado})`\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1270,
+        "y": 2360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "44e2f7e84ba9174e",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar Q07",
+        "func": "flow.set(\"Q07\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1660,
+        "y": 2260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "752f842d101010ab",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q04",
+        "diff": false,
+        "name": "Leer Q04",
+        "x": 1460,
+        "y": 2320,
+        "wires": [
+            [
+                "dc67bfa368292caf"
+            ]
+        ]
+    },
+    {
+        "id": "ced5090aeb072c99",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q06",
+        "diff": false,
+        "name": "Leer Q06",
+        "x": 1460,
+        "y": 2200,
+        "wires": [
+            [
+                "403b452d44985a85"
+            ]
+        ]
+    },
+    {
+        "id": "dc67bfa368292caf",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar Q04",
+        "func": "flow.set(\"Q04\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1660,
+        "y": 2320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "403b452d44985a85",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar Q06",
+        "func": "flow.set(\"Q06\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1660,
+        "y": 2200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b62f7da92a7ef7e2",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "Menú Telegram",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 200,
+        "y": 2720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cbbf648fea8b3544",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AQ5",
+        "diff": false,
+        "name": "Leer AQ5",
+        "x": 160,
+        "y": 2340,
+        "wires": [
+            [
+                "705429b53f0510d0"
+            ]
+        ]
+    },
+    {
+        "id": "705429b53f0510d0",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar AQ5",
+        "func": "var valor = msg.payload;\nif (valor > 32767) {\n    valor = (valor - 65536) / 10;\n}\nmsg.payload = valor;\nflow.set(\"AQ5\", valor);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e206b6e4b22a4e6c",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AQ7",
+        "diff": false,
+        "name": "Leer AQ7",
+        "x": 160,
+        "y": 2400,
+        "wires": [
+            [
+                "ef459f82fadb071c"
+            ]
+        ]
+    },
+    {
+        "id": "ef459f82fadb071c",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar AQ7",
+        "func": "var valor = msg.payload;\n\n// Corregir signo si es mayor a 32767 (UInt16 a Int16)\nif (valor > 32767) {\n    valor = valor - 65536;\n}\n\n// Dividir para 10 (escalado real)\nvar valor_real = valor / 10;\n\n// Guardar en flow\nflow.set(\"AQ7\", valor_real);\n\n// Retornar valor ya escalado\nmsg.payload = valor_real;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 2400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7483b995a4b33c73",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AI4",
+        "diff": true,
+        "name": "AI4 LOGO",
+        "x": 860,
+        "y": 2340,
+        "wires": [
+            [
+                "999aeb0ea91b3d6b"
+            ]
+        ]
+    },
+    {
+        "id": "66d2678e318cd209",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AI3",
+        "diff": true,
+        "name": "AI3 LOGO",
+        "x": 860,
+        "y": 2400,
+        "wires": [
+            [
+                "999aeb0ea91b3d6b"
+            ]
+        ]
+    },
+    {
+        "id": "999aeb0ea91b3d6b",
+        "type": "join",
+        "z": "25155530bc7a7727",
+        "name": "Unir AI3 y AI4",
+        "mode": "manual",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": true,
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1060,
+        "y": 2360,
+        "wires": [
+            [
+                "40ee8ef4298f7c99"
+            ]
+        ]
+    },
+    {
+        "id": "3dcfa42b627c028d",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AI4",
+        "diff": true,
+        "name": "AI4 LOGO",
+        "x": 1460,
+        "y": 2400,
+        "wires": [
+            [
+                "66595fded33a257d"
+            ]
+        ]
+    },
+    {
+        "id": "1267c7261315fe82",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AI3",
+        "diff": true,
+        "name": "AI3 LOGO",
+        "x": 1460,
+        "y": 2460,
+        "wires": [
+            [
+                "baf6de9c7a14d795"
+            ]
+        ]
+    },
+    {
+        "id": "f7a949159c6ff575",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 45",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1900,
+        "y": 2360,
+        "wires": []
+    },
+    {
+        "id": "66595fded33a257d",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Calcular Temp AI4",
+        "func": "// Valor crudo del sensor (0-1023)\nvar rawValue = msg.payload;\n\n// Convertir a voltaje (0-10V)\nvar voltage = (rawValue * 10) / 1023;\n\n// Calcular temperatura con calibración basada en tu tabla real\nvar temperature = 0.2517 * rawValue - 50.52;\n\n// Redondear a 3 decimales\ntemperature = parseFloat(temperature.toFixed(3));\n\n// Guardar valor en el contexto si lo necesitas\nflow.set(\"AI4_temperature\", temperature);\n\n// Retornar como payload\nmsg.payload = temperature;\n\n/*\n// Manejo de flag para alarma\nvar alarmSent = flow.get(\"AI4_alarm_sent\") || false;\n\nif (temperature > -4 && !alarmSent) {\n    flow.set(\"AI4_alarm_sent\", true);\n    msg.payload = `🚨 Alerta: Temperatura crítica en AI4: ${temperature} °C`;\n    return msg;\n} else if (temperature <= -4 && alarmSent) {\n    flow.set(\"AI4_alarm_sent\", false);\n}*/\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1690,
+        "y": 2400,
+        "wires": [
+            [
+                "f7a949159c6ff575",
+                "265cb41d8909b723",
+                "92d139466f39456c",
+                "e2e0ec8da8630414"
+            ]
+        ]
+    },
+    {
+        "id": "79b535d8e76437bf",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 48",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1900,
+        "y": 2500,
+        "wires": []
+    },
+    {
+        "id": "baf6de9c7a14d795",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Calcular Temp AI3",
+        "func": "// Valor crudo del sensor (0-1023)\nvar rawValue = msg.payload;\n\n// Convertir a voltaje (0-10V)\nvar voltage = (rawValue * 10) / 1023;\n\n// Calcular temperatura con calibración basada en tu tabla real\nvar temperature = 0.2517 * rawValue - 50.52;\n\n// Redondear a 3 decimales\ntemperature = parseFloat(temperature.toFixed(3));\n\n// Guardar valor en el contexto si lo necesitas\nflow.set(\"AI3_temperature\", temperature);\n\n// Retornar como payload\nmsg.payload = temperature;\n\n\n// Manejo de flag para alarma\nvar alarmSent = flow.get(\"AI3_alarm_sent\") || false;\n\n/*\nif (temperature > -4 && !alarmSent) {\n    // Enviar alerta solo si aún no se ha enviado\n    flow.set(\"AI3_alarm_sent\", true);\n    msg.payload = `🚨 Alerta: Temperatura crítica en AI3: ${temperature} °C`;\n    return msg;\n} else if (temperature <= -4 && alarmSent) {\n    // Resetear flag si baja la temperatura\n    flow.set(\"AI3_alarm_sent\", false);\n}*/\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1690,
+        "y": 2460,
+        "wires": [
+            [
+                "79b535d8e76437bf",
+                "648b9fe421585f75",
+                "2a08ae5964c37491",
+                "e2e0ec8da8630414"
+            ]
+        ]
+    },
+    {
+        "id": "648b9fe421585f75",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Temp AI3",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1900,
+        "y": 2560,
+        "wires": []
+    },
+    {
+        "id": "265cb41d8909b723",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Temp AI4",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1900,
+        "y": 2300,
+        "wires": []
+    },
+    {
+        "id": "92d139466f39456c",
+        "type": "ui_gauge",
+        "z": "25155530bc7a7727",
+        "name": "Temp AI4",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temp AI4",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": "-10",
+        "max": "10",
+        "colors": [
+            "#43d643",
+            "#e3e363",
+            "#c86f6f"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1900,
+        "y": 2240,
+        "wires": []
+    },
+    {
+        "id": "6601d32a1f32307b",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "AI4",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "5837b69a0326ea49",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": " AI3",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1150,
+        "y": 1760,
+        "wires": []
+    },
+    {
+        "id": "2a08ae5964c37491",
+        "type": "ui_gauge",
+        "z": "25155530bc7a7727",
+        "name": "Temp AI4",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temp AI3",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": "-10",
+        "max": "10",
+        "colors": [
+            "#43d643",
+            "#e3e363",
+            "#c86f6f"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1900,
+        "y": 2620,
+        "wires": []
+    },
+    {
+        "id": "c6ef23500ac6705e",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar alarma",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 2400,
+        "y": 2420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e2e0ec8da8630414",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Alarma por diferencia > 4 °C",
+        "func": "// Obtener las temperaturas almacenadas previamente en flow\nvar tAI3 = flow.get(\"AI3_temperature\");\nvar tAI4 = flow.get(\"AI4_temperature\");\n\n// Verificar que ambas estén disponibles\nif (tAI3 === undefined || tAI4 === undefined) {\n    return null;\n}\n\n// Calcular la diferencia absoluta\nvar diferencia = Math.abs(tAI3 - tAI4);\n\n// Chat IDs de destino\nvar chatIds = [6308328731, -1002636358662];\n\n// Leer flag de estado de alarma\nvar flag = flow.get(\"diferencial_alarma_activa\") || false;\n\n// Si diferencia supera 4 °C y no se ha activado antes\nif (diferencia > 4 && !flag) {\n    flow.set(\"diferencial_alarma_activa\", true);\n    let mensaje = `🚨 ALERTA ACTIVADA\\nDiferencia de temperatura mayor a 4°C\\nAI3: ${tAI3.toFixed(3)} °C\\nAI4: ${tAI4.toFixed(3)} °C\\nΔT: ${diferencia.toFixed(3)} °C`;\n    \n    // Enviar mensaje a cada chatId\n    return chatIds.map(id => ({\n        payload: {\n            chatId: id,\n            type: \"message\",\n            content: mensaje\n        }\n    }));\n}\n\n// Si diferencia vuelve a estar por debajo del umbral y estaba activa\nif (diferencia <= 4 && flag) {\n    flow.set(\"diferencial_alarma_activa\", false);\n    let mensaje = `✅ ALARMA DESACTIVADA\\nDiferencia de temperatura normal\\nAI3: ${tAI3.toFixed(3)} °C\\nAI4: ${tAI4.toFixed(3)} °C\\nΔT: ${diferencia.toFixed(3)} °C`;\n    \n    return chatIds.map(id => ({\n        payload: {\n            chatId: id,\n            type: \"message\",\n            content: mensaje\n        }\n    }));\n}\n\n// No enviar nada si no hay cambio de estado\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2100,
+        "y": 2420,
+        "wires": [
+            [
+                "c6ef23500ac6705e",
+                "3141566d5eae82dc"
+            ]
+        ]
+    },
+    {
+        "id": "3141566d5eae82dc",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 49",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2380,
+        "y": 2360,
+        "wires": []
+    },
+    {
+        "id": "0cea9aca53990fe9",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "Simular AM6 y AM7",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"AM6 PA\":16788,\"AM7 PA\":-10240}",
+        "payloadType": "json",
+        "x": 2000,
+        "y": 2940,
+        "wires": [
+            [
+                "ec3037bd537614f1"
+            ]
+        ]
+    },
+    {
+        "id": "ec3037bd537614f1",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Convertir IEEE754 y escalar *100",
+        "func": "/* Obtener las palabras\nlet am6_signed = msg.payload[\"AM6\"];\nlet am7_signed = msg.payload[\"AM7\"];\n\n// Ajustar negativos a unsigned\nlet am6_unsigned = am6_signed < 0 ? 0x10000 + am6_signed : am6_signed;\nlet am7_unsigned = am7_signed < 0 ? 0x10000 + am7_signed : am7_signed;\n\n// Crear buffer para float\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am6_unsigned, 0); // High word\nbuffer.writeUInt16BE(am7_unsigned, 2); // Low word\n\n// Leer float\nlet floatVal = buffer.readFloatBE(0);\n\n// Guardar valor flotante para debug\nmsg.valorFlotante = parseFloat(floatVal.toFixed(2));\n\n// Escalar para enviar entero a LOGO\nmsg.payload = Math.round(floatVal * 100);\n\nreturn msg;*/\n\n/*let am6_signed = msg.payload[\"AM6\"];\nlet am7_signed = msg.payload[\"AM7\"];\n\n// Convertir a unsigned si son negativos\nlet am6_unsigned = am6_signed < 0 ? 0x10000 + am6_signed : am6_signed;\nlet am7_unsigned = am7_signed < 0 ? 0x10000 + am7_signed : am7_signed;\n\n// Armar el buffer\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am6_unsigned, 0); // High Word\nbuffer.writeUInt16BE(am7_unsigned, 2); // Low Word\n\n// Leer el float IEEE 754\nlet floatVal = buffer.readFloatBE(0);\n\n// Separar parte entera y decimal\nlet parteEntera = Math.floor(floatVal);\nlet parteDecimal = Math.round((floatVal - parteEntera) * 100); // Escalamos a 2 decimales\n\n// Preparar los datos para escribir a LOGO (por ejemplo VW10 y VW12)\nmsg.payload = [\n    { address: 1, value: parteEntera },  // VW32\n    { address: 2, value: parteDecimal }  // VW34\n];\nmsg.payload = {\n    palabrasOriginales: {\n        AM6: am6_signed,\n        AM7: am7_signed\n    },\n    palabrasUnsigned: {\n        AM6_unsigned: am6_unsigned,\n        AM7_unsigned: am7_unsigned\n    },\n    floatConvertido: floatVal,\n    escalado: {\n        parteEntera: parteEntera,\n        parteDecimal: parteDecimal\n    },\n    valoresParaLOGO: [\n        { address: 1, value: parteEntera },\n        { address: 2, value: parteDecimal }\n    ]\n};\n\nreturn msg;\n*/\n\nlet am6_signed = msg.payload[\"AM6 PA\"];\nlet am7_signed = msg.payload[\"AM7 PA\"];\n\nlet am6_unsigned = am6_signed < 0 ? 0x10000 + am6_signed : am6_signed;\nlet am7_unsigned = am7_signed < 0 ? 0x10000 + am7_signed : am7_signed;\n\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am6_unsigned, 0);\nbuffer.writeUInt16BE(am7_unsigned, 2);\n\nlet floatVal = buffer.readFloatBE(0);\nlet parteEntera = Math.floor(floatVal);\nlet parteDecimal = Math.round((floatVal - parteEntera) * 100);\n\nnode.warn(\"Float convertido: \" + floatVal.toFixed(2));\nnode.warn(\"Parte entera: \" + parteEntera);\nnode.warn(\"Parte decimal: \" + parteDecimal);\n\nmsg.payload = {\n    'TOTAL': floatVal.toFixed(2),\n    'DB1,WORD32': parteEntera,     // AM11\n    'DB1,WORD34': parteDecimal     // Por ejemplo, AM12\n};\n\nvar valor = floatVal.toFixed(2);\nmsg.payload = {\n    medidor1: valor\n};\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2320,
+        "y": 2940,
+        "wires": [
+            [
+                "22f913eb9d4f58b6",
+                "bb66f246fa31df42"
+            ]
+        ]
+    },
+    {
+        "id": "d6a3561d79e68a99",
+        "type": "s7 out",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "variable": "VW32",
+        "name": "Enviar a LOGO VW32",
+        "x": 2960,
+        "y": 2840,
+        "wires": []
+    },
+    {
+        "id": "52784b34d54f1d52",
+        "type": "s7 out",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "variable": "VW34",
+        "name": "Enviar a LOGO VW34",
+        "x": 2960,
+        "y": 3040,
+        "wires": []
+    },
+    {
+        "id": "1362c01c501edb8b",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AM7 PA",
+        "diff": true,
+        "name": "NC1",
+        "x": 1710,
+        "y": 2900,
+        "wires": [
+            [
+                "987b5f0cc0041b59"
+            ]
+        ]
+    },
+    {
+        "id": "6579ed0b613a2e97",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AM6 PA",
+        "diff": true,
+        "name": "NC1",
+        "x": 1710,
+        "y": 2840,
+        "wires": [
+            [
+                "987b5f0cc0041b59"
+            ]
+        ]
+    },
+    {
+        "id": "987b5f0cc0041b59",
+        "type": "join",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": true,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1970,
+        "y": 2880,
+        "wires": [
+            [
+                "ec3037bd537614f1",
+                "696a4a6993341e24"
+            ]
+        ]
+    },
+    {
+        "id": "696a4a6993341e24",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 73",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2240,
+        "y": 2860,
+        "wires": []
+    },
+    {
+        "id": "22f913eb9d4f58b6",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 74",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2620,
+        "y": 3000,
+        "wires": []
+    },
+    {
+        "id": "bb66f246fa31df42",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Separar Entera y Decimal",
+        "func": "/*let parteEntera = msg.payload.escalado.parteEntera;\nlet parteDecimal = msg.payload.escalado.parteDecimal;\n\nlet msg1 = { payload: parteEntera };\nlet msg2 = { payload: parteDecimal };\n\nreturn [msg1, msg2];*/\n\nlet parteEntera = msg.payload[\"DB1,WORD32\"];\nlet parteDecimal = msg.payload[\"DB1,WORD34\"];\n\nlet msg1 = { payload: parteEntera };\nlet msg2 = { payload: parteDecimal };\n\nreturn [msg1, msg2];\n",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2630,
+        "y": 2940,
+        "wires": [
+            [
+                "d6a3561d79e68a99",
+                "6d339ea5fc5b9645"
+            ],
+            [
+                "41b01f39638c72e9",
+                "52784b34d54f1d52"
+            ]
+        ]
+    },
+    {
+        "id": "6d339ea5fc5b9645",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "Parte Entera",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 2930,
+        "y": 2900,
+        "wires": []
+    },
+    {
+        "id": "41b01f39638c72e9",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "Parte Decimal",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2930,
+        "y": 2980,
+        "wires": []
+    },
+    {
+        "id": "88cf12b3c29d8a7e",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "Simular AM6 y AM7",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"AM13 EA\":16788,\"AM14 EA\":16788}",
+        "payloadType": "json",
+        "x": 420,
+        "y": 3260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "454ef3d5847304da",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Convertir IEEE754 y escalar *100",
+        "func": "/* Obtener las palabras\nlet am6_signed = msg.payload[\"AM6\"];\nlet am7_signed = msg.payload[\"AM7\"];\n\n// Ajustar negativos a unsigned\nlet am6_unsigned = am6_signed < 0 ? 0x10000 + am6_signed : am6_signed;\nlet am7_unsigned = am7_signed < 0 ? 0x10000 + am7_signed : am7_signed;\n\n// Crear buffer para float\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am6_unsigned, 0); // High word\nbuffer.writeUInt16BE(am7_unsigned, 2); // Low word\n\n// Leer float\nlet floatVal = buffer.readFloatBE(0);\n\n// Guardar valor flotante para debug\nmsg.valorFlotante = parseFloat(floatVal.toFixed(2));\n\n// Escalar para enviar entero a LOGO\nmsg.payload = Math.round(floatVal * 100);\n\nreturn msg;*/\n\n/*let am6_signed = msg.payload[\"AM6\"];\nlet am7_signed = msg.payload[\"AM7\"];\n\n// Convertir a unsigned si son negativos\nlet am6_unsigned = am6_signed < 0 ? 0x10000 + am6_signed : am6_signed;\nlet am7_unsigned = am7_signed < 0 ? 0x10000 + am7_signed : am7_signed;\n\n// Armar el buffer\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am6_unsigned, 0); // High Word\nbuffer.writeUInt16BE(am7_unsigned, 2); // Low Word\n\n// Leer el float IEEE 754\nlet floatVal = buffer.readFloatBE(0);\n\n// Separar parte entera y decimal\nlet parteEntera = Math.floor(floatVal);\nlet parteDecimal = Math.round((floatVal - parteEntera) * 100); // Escalamos a 2 decimales\n\n// Preparar los datos para escribir a LOGO (por ejemplo VW10 y VW12)\nmsg.payload = [\n    { address: 1, value: parteEntera },  // VW32\n    { address: 2, value: parteDecimal }  // VW34\n];\nmsg.payload = {\n    palabrasOriginales: {\n        AM6: am6_signed,\n        AM7: am7_signed\n    },\n    palabrasUnsigned: {\n        AM6_unsigned: am6_unsigned,\n        AM7_unsigned: am7_unsigned\n    },\n    floatConvertido: floatVal,\n    escalado: {\n        parteEntera: parteEntera,\n        parteDecimal: parteDecimal\n    },\n    valoresParaLOGO: [\n        { address: 1, value: parteEntera },\n        { address: 2, value: parteDecimal }\n    ]\n};\n\nreturn msg;\n*/\n\nlet am13_signed = msg.payload[\"AM13 EA\"];\nlet am14_signed = msg.payload[\"AM14 EA\"];\n\nlet am13_unsigned = am13_signed < 0 ? 0x10000 + am13_signed : am13_signed;\nlet am14_unsigned = am14_signed < 0 ? 0x10000 + am14_signed : am14_signed;\n\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am13_unsigned, 0);\nbuffer.writeUInt16BE(am14_unsigned, 2);\n\nlet floatVal = buffer.readFloatBE(0);\nlet parteEntera = Math.floor(floatVal);\nlet parteDecimal = Math.round((floatVal - parteEntera) * 100);\n\nnode.warn(\"Float convertido: \" + floatVal.toFixed(2));\nnode.warn(\"Parte entera: \" + parteEntera);\nnode.warn(\"Parte decimal: \" + parteDecimal);\n\nmsg.payload = {\n    'TOTAL': floatVal.toFixed(2),\n    'DB1,WORD36': parteEntera,     // AM11\n    'DB1,WORD38': parteDecimal     // Por ejemplo, AM12\n};\n\nvar valor = floatVal.toFixed(2);\nmsg.payload = {\n    medidor2: valor\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 3260,
+        "wires": [
+            [
+                "60380165e65ecd42",
+                "6826ab51b7ce9213"
+            ]
+        ]
+    },
+    {
+        "id": "604310ab8fdbfab9",
+        "type": "s7 out",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "variable": "VW36",
+        "name": "Enviar a LOGO VW36",
+        "x": 1380,
+        "y": 3160,
+        "wires": []
+    },
+    {
+        "id": "2f2905af646e223c",
+        "type": "s7 out",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "variable": "VW38",
+        "name": "Enviar a LOGO VW38",
+        "x": 1380,
+        "y": 3360,
+        "wires": []
+    },
+    {
+        "id": "6a2dfb2cf93f0040",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AM14 EA",
+        "diff": true,
+        "name": "NC2",
+        "x": 130,
+        "y": 3220,
+        "wires": [
+            [
+                "6f619b12c8576863"
+            ]
+        ]
+    },
+    {
+        "id": "61568d74e99ba56e",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AM13 EA",
+        "diff": true,
+        "name": "NC2",
+        "x": 130,
+        "y": 3160,
+        "wires": [
+            [
+                "6f619b12c8576863"
+            ]
+        ]
+    },
+    {
+        "id": "6f619b12c8576863",
+        "type": "join",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": true,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 390,
+        "y": 3200,
+        "wires": [
+            [
+                "454ef3d5847304da",
+                "0dc51c4be4ec2122"
+            ]
+        ]
+    },
+    {
+        "id": "0dc51c4be4ec2122",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 75",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 3180,
+        "wires": []
+    },
+    {
+        "id": "60380165e65ecd42",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 76",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1040,
+        "y": 3320,
+        "wires": []
+    },
+    {
+        "id": "6826ab51b7ce9213",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Separar Entera y Decimal",
+        "func": "/*let parteEntera = msg.payload.escalado.parteEntera;\nlet parteDecimal = msg.payload.escalado.parteDecimal;\n\nlet msg1 = { payload: parteEntera };\nlet msg2 = { payload: parteDecimal };\n\nreturn [msg1, msg2];*/\n\nlet parteEntera = msg.payload[\"DB1,WORD36\"];\nlet parteDecimal = msg.payload[\"DB1,WORD38\"];\n\nlet msg1 = { payload: parteEntera };\nlet msg2 = { payload: parteDecimal };\n\nreturn [msg1, msg2];\n",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 3260,
+        "wires": [
+            [
+                "604310ab8fdbfab9",
+                "39941d243311a1b1"
+            ],
+            [
+                "3a544dd4bf7b04fb",
+                "2f2905af646e223c"
+            ]
+        ]
+    },
+    {
+        "id": "39941d243311a1b1",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "Parte Entera",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1350,
+        "y": 3220,
+        "wires": []
+    },
+    {
+        "id": "3a544dd4bf7b04fb",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "Parte Decimal",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1350,
+        "y": 3300,
+        "wires": []
+    },
+    {
+        "id": "27082cf671ffb75b",
+        "type": "comment",
+        "z": "25155530bc7a7727",
+        "name": "MEDIDOR 1",
+        "info": "",
+        "x": 170,
+        "y": 2780,
+        "wires": []
+    },
+    {
+        "id": "dae812eb879dd390",
+        "type": "comment",
+        "z": "25155530bc7a7727",
+        "name": "MEDIDOR 2",
+        "info": "",
+        "x": 170,
+        "y": 3100,
+        "wires": []
+    },
+    {
+        "id": "f11ad50081ef6783",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "RUN FERMENTADOR",
+        "token": "BBUS-YcNR68RGzaAGy8Yd5uwfFFownJ4otq",
+        "label_device": "",
+        "device_label": "tesis",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 980,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "96870c3836b238ad",
+        "type": "change",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "1",
+                "tot": "num"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 80,
+        "wires": [
+            [
+                "ad17413263ae651a"
+            ]
+        ]
+    },
+    {
+        "id": "ad17413263ae651a",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 12",
+        "func": "var valor = msg.payload;\nmsg.payload = {\n    runfermentador: valor\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 80,
+        "wires": [
+            [
+                "f11ad50081ef6783"
+            ]
+        ]
+    },
+    {
+        "id": "5def661ebae03c66",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 15",
+        "func": "var valor = msg.payload;\nmsg.payload = {\n    diferencial_temp_ferm: valor\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 360,
+        "wires": [
+            [
+                "093943e2d082a956"
+            ]
+        ]
+    },
+    {
+        "id": "093943e2d082a956",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "DIFERENCIAL_TEMP",
+        "token": "BBUS-YcNR68RGzaAGy8Yd5uwfFFownJ4otq",
+        "label_device": "",
+        "device_label": "tesis",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 1000,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "bfa15b026d6959c5",
+        "type": "change",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "1",
+                "tot": "num"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 520,
+        "y": 760,
+        "wires": [
+            [
+                "af131a7c3605ba2d"
+            ]
+        ]
+    },
+    {
+        "id": "af131a7c3605ba2d",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 23",
+        "func": "var local = {\"alarmaset_temp\":msg.payload};\nreturn {\"payload\":local};",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 760,
+        "wires": [
+            [
+                "ce0c56fc7f1a490a"
+            ]
+        ]
+    },
+    {
+        "id": "ce0c56fc7f1a490a",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "ALARMA_SET_TEMP",
+        "token": "BBUS-YcNR68RGzaAGy8Yd5uwfFFownJ4otq",
+        "label_device": "",
+        "device_label": "tesis",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 1140,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "d7ed3397a1159531",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q04",
+        "diff": true,
+        "name": "GRUPO ALARMAS 1",
+        "x": 2640,
+        "y": 680,
+        "wires": [
+            [
+                "c1611e014b77799f"
+            ]
+        ]
+    },
+    {
+        "id": "c1611e014b77799f",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar estado real G1",
+        "func": "let estado = msg.payload[\"Q04\"];\nflow.set('estadoRealAlarma1', estado);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2900,
+        "y": 680,
+        "wires": [
+            [
+                "a9ccdc37075eca4e"
+            ]
+        ]
+    },
+    {
+        "id": "a9ccdc37075eca4e",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Activar alarma G1 (sin botones)",
+        "func": "let estadoActual = msg.payload[\"Q04\"];\nlet estadoAnterior = flow.get('prevAlarma1') || false;\n\nif (estadoActual === true && estadoAnterior === false) {\n    flow.set('alarma1', true);\n    flow.set('grupoActBtn', 1);\n    flow.set('prevAlarma1', true);  // guardamos el nuevo estado\n\n    var chatIds = [6308328731, -1002636358662];\n    for (var i = 0; i < chatIds.length; i++) {\n        let newMsg = {\n            payload: {\n                chatId: chatIds[i],\n                type: \"message\",\n                content: \"🚨 ALERTA\\nGrupo de alarmas 1 activado.\\n\\n❗️Revise el sistema para continuar con la operación.\"\n            }\n        };\n        node.send(newMsg);\n    }\n}\nflow.set('prevAlarma1', estadoActual);  // Actualizamos el estado\nreturn null;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 3170,
+        "y": 680,
+        "wires": [
+            [
+                "2a439f4a641e463b",
+                "5f164d593b49f699"
+            ]
+        ]
+    },
+    {
+        "id": "2a439f4a641e463b",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar mensaje Telegram G1",
+        "bot": "telegram_bot_config",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 3460,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5f164d593b49f699",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug alarma G1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 3460,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "a8d674b834ca3d60",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Convertir AQ4 a temp_return",
+        "func": "var valor = msg.payload;\nif (valor > 32767) {\n    valor = valor - 65536;\n}\n/*msg.payload = {\n    temp_return: valor\n};*/\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1480,
+        "y": 1920,
+        "wires": [
+            [
+                "44adba2cb18fac46",
+                "7ee81f9bd6a9d013",
+                "b242523ae24b88ff"
+            ]
+        ]
+    },
+    {
+        "id": "44adba2cb18fac46",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "Debug payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1720,
+        "y": 1880,
+        "wires": []
+    },
+    {
+        "id": "7ee81f9bd6a9d013",
+        "type": "ui_text",
+        "z": "25155530bc7a7727",
+        "group": "f8ca6ca6ee1cb9d4",
+        "order": 3,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Temp retorno",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1730,
+        "y": 1940,
+        "wires": []
+    },
+    {
+        "id": "b242523ae24b88ff",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 29",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1720,
+        "y": 1980,
+        "wires": []
+    },
+    {
+        "id": "48ae34779436dbfd",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "medidor1",
+        "token": "BBUS-7u4xzEjtKPGCok8SKOAhzpPcKOUkyi",
+        "label_device": "",
+        "device_label": "cds1",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 1000,
+        "y": 2900,
+        "wires": []
+    },
+    {
+        "id": "97da89e7f4031fa2",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 190,
+        "y": 860,
+        "wires": [
+            [
+                "bfa15b026d6959c5"
+            ]
+        ]
+    },
+    {
+        "id": "b5c2630e5de14dcf",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q04",
+        "diff": true,
+        "name": "GRUPO ALARMAS 1",
+        "x": 180,
+        "y": 1300,
+        "wires": [
+            [
+                "9354c539301523cc",
+                "512fb4745689f688"
+            ]
+        ]
+    },
+    {
+        "id": "ab5638b98e661c0f",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar estado real G1",
+        "func": "let estado = msg.payload[\"Q04\"];\nflow.set('estadoRealAlarma1', estado);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1490,
+        "y": 1300,
+        "wires": [
+            [
+                "79de5ae6b44d06d1"
+            ]
+        ]
+    },
+    {
+        "id": "79de5ae6b44d06d1",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Activar alarma G1 (sin botones)",
+        "func": "let estadoActual = msg.payload[\"Q04\"];\nlet estadoAnterior = flow.get('prevAlarma1') || false;\n\nif (estadoActual === true && estadoAnterior === false) {\n    flow.set('alarma1', true);\n    flow.set('grupoActBtn', 1);\n    flow.set('prevAlarma1', true);  // guardamos el nuevo estado\n\n    var chatIds = [6308328731, -1002636358662];\n    for (var i = 0; i < chatIds.length; i++) {\n        let newMsg = {\n            payload: {\n                chatId: chatIds[i],\n                type: \"message\",\n                content: \"🚨 ALERTA\\nGrupo de alarmas 1 activado.\\n\\n❗️Revise el sistema para continuar con la operación.\"\n            }\n        };\n        node.send(newMsg);\n    }\n}\nflow.set('prevAlarma1', estadoActual);  // Actualizamos el estado\nreturn null;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1760,
+        "y": 1300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0f8f5bc186378f9a",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar mensaje Telegram G1",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1020,
+        "y": 1280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a51277a0a80172fb",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug alarma G1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "62682c70b10966fd",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q06",
+        "diff": true,
+        "name": "GRUPO ALARMAS 2",
+        "x": 200,
+        "y": 1080,
+        "wires": [
+            [
+                "2e0cb172fa214640",
+                "97d3871bb73cdff4"
+            ]
+        ]
+    },
+    {
+        "id": "ce0fd0fec1b885be",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Guardar estado real G2",
+        "func": "let estado = msg.payload[\"Q06\"];\nflow.set('estadoRealAlarma2', estado);\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2810,
+        "y": 800,
+        "wires": [
+            [
+                "e9ab14ec243284c1"
+            ]
+        ]
+    },
+    {
+        "id": "e9ab14ec243284c1",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Activar alarma (sin botones)",
+        "func": "let estadoActual = msg.payload[\"Q06\"];\nlet estadoAnterior = flow.get('prevAlarma2') || false;\n\nif (estadoActual === true && estadoAnterior === false) {\n    flow.set('alarma2', true);\n    flow.set('grupoActBtn', 1);\n    flow.set('prevAlarma2', true);  // guardamos el nuevo estado\n\n    var chatIds = [6308328731, -1002636358662];\n    for (var i = 0; i < chatIds.length; i++) {\n        let newMsg = {\n            payload: {\n                chatId: chatIds[i],\n                type: \"message\",\n                content: \"🚨 ALERTA\\nGrupo de alarmas 2 activado.\\n\\n❗️Revise el sistema para continuar con la operación.\"\n            }\n        };\n        node.send(newMsg);\n    }\n}\nflow.set('prevAlarma2', estadoActual);  // Actualizamos el estado\nreturn null;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 3100,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8d6b99b699517d9f",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar mensaje Telegram",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1080,
+        "y": 1040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c3eccb7c4bcd90e7",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug alarma",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "a1a1a1a1a1a1a1a1",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "Simular Q04 = true",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"Q04\": true}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 1240,
+        "wires": [
+            [
+                "9354c539301523cc",
+                "512fb4745689f688"
+            ]
+        ]
+    },
+    {
+        "id": "b2b2b2b2b2b2b2b2",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "Simular Q04 = false",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"Q04\": false}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 1360,
+        "wires": [
+            [
+                "512fb4745689f688"
+            ]
+        ]
+    },
+    {
+        "id": "d4d4d4d4d4d4d4d4",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "Simular Q06 = false",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"Q06\": false}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 1180,
+        "wires": [
+            [
+                "97d3871bb73cdff4"
+            ]
+        ]
+    },
+    {
+        "id": "2e0cb172fa214640",
+        "type": "change",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "1",
+                "tot": "num"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 540,
+        "y": 1020,
+        "wires": [
+            [
+                "dcbdc4a8fe6de30a"
+            ]
+        ]
+    },
+    {
+        "id": "dcacbe1430ac1935",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 28",
+        "func": "var local = {\"alarmasg2\":msg.payload};\nreturn {\"payload\":local};",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 850,
+        "y": 920,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0362ac6f5c2251ad",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 29",
+        "func": "var valor = msg.payload;\nmsg.payload = {\n    alarmasg1: valor\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 1240,
+        "wires": [
+            [
+                "056ead74ce52d556"
+            ]
+        ]
+    },
+    {
+        "id": "9354c539301523cc",
+        "type": "change",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "1",
+                "tot": "num"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 520,
+        "y": 1240,
+        "wires": [
+            [
+                "0362ac6f5c2251ad"
+            ]
+        ]
+    },
+    {
+        "id": "0a7b6b22ee69f2ec",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "Simular AM6 y AM7",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"AM6\":16788,\"AM7\":-10240}",
+        "payloadType": "json",
+        "x": 320,
+        "y": 2980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c13dc530b8660eeb",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Convertir IEEE754 y escalar *100",
+        "func": "/* Obtener las palabras\nlet am6_signed = msg.payload[\"AM6\"];\nlet am7_signed = msg.payload[\"AM7\"];\n\n// Ajustar negativos a unsigned\nlet am6_unsigned = am6_signed < 0 ? 0x10000 + am6_signed : am6_signed;\nlet am7_unsigned = am7_signed < 0 ? 0x10000 + am7_signed : am7_signed;\n\n// Crear buffer para float\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am6_unsigned, 0); // High word\nbuffer.writeUInt16BE(am7_unsigned, 2); // Low word\n\n// Leer float\nlet floatVal = buffer.readFloatBE(0);\n\n// Guardar valor flotante para debug\nmsg.valorFlotante = parseFloat(floatVal.toFixed(2));\n\n// Escalar para enviar entero a LOGO\nmsg.payload = Math.round(floatVal * 100);\n\nreturn msg;*/\n\n/*let am6_signed = msg.payload[\"AM6\"];\nlet am7_signed = msg.payload[\"AM7\"];\n\n// Convertir a unsigned si son negativos\nlet am6_unsigned = am6_signed < 0 ? 0x10000 + am6_signed : am6_signed;\nlet am7_unsigned = am7_signed < 0 ? 0x10000 + am7_signed : am7_signed;\n\n// Armar el buffer\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am6_unsigned, 0); // High Word\nbuffer.writeUInt16BE(am7_unsigned, 2); // Low Word\n\n// Leer el float IEEE 754\nlet floatVal = buffer.readFloatBE(0);\n\n// Separar parte entera y decimal\nlet parteEntera = Math.floor(floatVal);\nlet parteDecimal = Math.round((floatVal - parteEntera) * 100); // Escalamos a 2 decimales\n\n// Preparar los datos para escribir a LOGO (por ejemplo VW10 y VW12)\nmsg.payload = [\n    { address: 1, value: parteEntera },  // VW32\n    { address: 2, value: parteDecimal }  // VW34\n];\nmsg.payload = {\n    palabrasOriginales: {\n        AM6: am6_signed,\n        AM7: am7_signed\n    },\n    palabrasUnsigned: {\n        AM6_unsigned: am6_unsigned,\n        AM7_unsigned: am7_unsigned\n    },\n    floatConvertido: floatVal,\n    escalado: {\n        parteEntera: parteEntera,\n        parteDecimal: parteDecimal\n    },\n    valoresParaLOGO: [\n        { address: 1, value: parteEntera },\n        { address: 2, value: parteDecimal }\n    ]\n};\n\nreturn msg;\n*/\n\nlet am6_signed = msg.payload[\"AM6 PA\"];\nlet am7_signed = msg.payload[\"AM7 PA\"];\n\nlet am6_unsigned = am6_signed < 0 ? 0x10000 + am6_signed : am6_signed;\nlet am7_unsigned = am7_signed < 0 ? 0x10000 + am7_signed : am7_signed;\n\nlet buffer = Buffer.alloc(4);\nbuffer.writeUInt16BE(am6_unsigned, 0);\nbuffer.writeUInt16BE(am7_unsigned, 2);\n\nlet floatVal = buffer.readFloatBE(0);\nlet parteEntera = Math.floor(floatVal);\nlet parteDecimal = Math.round((floatVal - parteEntera) * 100);\n\nnode.warn(\"Float convertido: \" + floatVal.toFixed(2));\nnode.warn(\"Parte entera: \" + parteEntera);\nnode.warn(\"Parte decimal: \" + parteDecimal);\n\nmsg.payload = {\n    'DB1,WORD32': parteEntera,     // AM11\n    'DB1,WORD34': parteDecimal     // Por ejemplo, AM12\n};\n\n\nvar valor = floatVal.toFixed(2);\nmsg.payload = {\n    medidor1: valor\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 2980,
+        "wires": [
+            [
+                "b06bcf7c10809d85",
+                "e1d68d79a4c3d62f"
+            ]
+        ]
+    },
+    {
+        "id": "9087b10bf709c0da",
+        "type": "s7 out",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "variable": "VW32",
+        "name": "Enviar a LOGO ",
+        "x": 1340,
+        "y": 2880,
+        "wires": []
+    },
+    {
+        "id": "5785667680168aec",
+        "type": "s7 out",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "variable": "VW34",
+        "name": "Enviar a LOGO VW34",
+        "x": 1360,
+        "y": 3080,
+        "wires": []
+    },
+    {
+        "id": "dbff5c7b4547c207",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AM7 PA",
+        "diff": true,
+        "name": "",
+        "x": 170,
+        "y": 2900,
+        "wires": [
+            [
+                "ae03ba33c0d8a423"
+            ]
+        ]
+    },
+    {
+        "id": "23ed36b2429e7769",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "AM6 PA",
+        "diff": true,
+        "name": "",
+        "x": 170,
+        "y": 2840,
+        "wires": [
+            [
+                "ae03ba33c0d8a423"
+            ]
+        ]
+    },
+    {
+        "id": "ae03ba33c0d8a423",
+        "type": "join",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": true,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 370,
+        "y": 2920,
+        "wires": [
+            [
+                "c13dc530b8660eeb",
+                "7fa9a1226307ea4b"
+            ]
+        ]
+    },
+    {
+        "id": "7fa9a1226307ea4b",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 82",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 2900,
+        "wires": []
+    },
+    {
+        "id": "b06bcf7c10809d85",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 83",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 3040,
+        "wires": []
+    },
+    {
+        "id": "e1d68d79a4c3d62f",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Separar Entera y Decimal",
+        "func": "/*let parteEntera = msg.payload.escalado.parteEntera;\nlet parteDecimal = msg.payload.escalado.parteDecimal;\n\nlet msg1 = { payload: parteEntera };\nlet msg2 = { payload: parteDecimal };\n\nreturn [msg1, msg2];*/\n\nlet parteEntera = msg.payload[\"DB1,WORD32\"];\nlet parteDecimal = msg.payload[\"DB1,WORD34\"];\n\nlet msg1 = { payload: parteEntera };\nlet msg2 = { payload: parteDecimal };\n\nreturn [msg1, msg2];\n",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 2980,
+        "wires": [
+            [
+                "9087b10bf709c0da",
+                "6098437907423ffa"
+            ],
+            [
+                "c56de9572d774191",
+                "5785667680168aec"
+            ]
+        ]
+    },
+    {
+        "id": "6098437907423ffa",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "Parte Entera",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1330,
+        "y": 2940,
+        "wires": []
+    },
+    {
+        "id": "c56de9572d774191",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "Parte Decimal",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1330,
+        "y": 3020,
+        "wires": []
+    },
+    {
+        "id": "20cb1a6f090fbe2b",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar a Telegram",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1790,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b97ae4dc436d4a6f",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Sistema en funcionamiento ",
+        "func": "var estadoActual1 = msg.payload;\nvar estadoAnterior1 = flow.get(\"estado_sistema1\") || null;  // Estado anterior guardado\n\n// Solo continuar si el estado cambió\nif (estadoActual1 !== estadoAnterior1) {\n    flow.set(\"estado_sistema1\", estadoActual1); // Guardar nuevo estado\n    var chatIds = [6308328731, -1002636358662];\n\n    if (estadoActual1 === true) {\n        // Sistema en funcionamiento (alerta desactivada)\n        for (var i = 0; i < chatIds.length; i++) {\n            node.send({\n                payload: {\n                    chatId: chatIds[i],\n                    type: \"message\",\n                    content: \"✅ Sistema en funcionamiento BBT.\"\n                }\n            });\n        }\n    } else if (estadoActual1 === false) {\n        // Sistema apagado (alerta activada)\n        for (var i = 0; i < chatIds.length; i++) {\n            node.send({\n                payload: {\n                    chatId: chatIds[i],\n                    type: \"message\",\n                    content: \"🚨 ALERTA ACTIVADA BBT\\nSistema apagado.\"\n                }\n            });\n        }\n    }\n}\n\n// Si no hubo cambio de estado, no hacer nada\nreturn null;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1540,
+        "y": 180,
+        "wires": [
+            [
+                "20cb1a6f090fbe2b",
+                "e027d46eab621fd3"
+            ]
+        ]
+    },
+    {
+        "id": "cb1b1c8225f7fe90",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "I2",
+        "diff": false,
+        "name": "RUN BBT",
+        "x": 1280,
+        "y": 120,
+        "wires": [
+            [
+                "b97ae4dc436d4a6f",
+                "48d5be5301fc9f9e"
+            ]
+        ]
+    },
+    {
+        "id": "e027d46eab621fd3",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 84",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1800,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "02a7a8f0506daa27",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 1310,
+        "y": 220,
+        "wires": [
+            [
+                "b97ae4dc436d4a6f",
+                "48d5be5301fc9f9e"
+            ]
+        ]
+    },
+    {
+        "id": "1ff488502815a808",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 1310,
+        "y": 180,
+        "wires": [
+            [
+                "b97ae4dc436d4a6f",
+                "48d5be5301fc9f9e"
+            ]
+        ]
+    },
+    {
+        "id": "d422b583367c0d32",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "RUN BBT",
+        "token": "BBUS-YcNR68RGzaAGy8Yd5uwfFFownJ4otq",
+        "label_device": "",
+        "device_label": "tesis",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 2000,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "48d5be5301fc9f9e",
+        "type": "change",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "1",
+                "tot": "num"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1520,
+        "y": 80,
+        "wires": [
+            [
+                "a7a03a2a3163c8dd"
+            ]
+        ]
+    },
+    {
+        "id": "a7a03a2a3163c8dd",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 32",
+        "func": "var valor = msg.payload;\nmsg.payload = {\n    runbbt: valor\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1790,
+        "y": 80,
+        "wires": [
+            [
+                "d422b583367c0d32",
+                "c8c2dfc7cb8d20bd"
+            ]
+        ]
+    },
+    {
+        "id": "19b546aa034431ef",
+        "type": "telegram sender",
+        "z": "25155530bc7a7727",
+        "name": "Enviar a Telegram",
+        "bot": "2095f41376c7be0b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1810,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8a0da5855efbc897",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Evaluar señal y enviar alarma",
+        "func": "if (msg.payload === true) {\n    // Definir los chatIds a los que se enviará el mensaje\n    var chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n    // Recorremos cada chatId y enviamos el mensaje con la foto\n    for (var i = 0; i < chatIds.length; i++) {\n        msg.payload = {\n            chatId: chatIds[i], // Usamos el chatId de la lista\n            type: \"photo\",\n            content: \"Downloads/ALERTA.jpg\", // Ruta local a la imagen\n            caption: \"🚨 ALERTA ACTIVADA BBT\\nDiferencial de Temp mayor a 4°C\\nChiller Fermentador\"\n        };\n        node.send(msg); // Enviamos el mensaje con la foto\n    }\n    return null; // No necesitamos enviar nada más después del bucle\n} else {\n    return null; // Si no es 1 ni 0, no hace nada\n}\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1550,
+        "y": 420,
+        "wires": [
+            [
+                "19b546aa034431ef",
+                "0dca08e3d2a58af9"
+            ]
+        ]
+    },
+    {
+        "id": "a20bd24bf1f837b4",
+        "type": "s7 in",
+        "z": "25155530bc7a7727",
+        "endpoint": "1b2096d84f569c5f",
+        "mode": "single",
+        "variable": "Q03",
+        "diff": true,
+        "name": "DIFERENCIAL TEMP BBT",
+        "x": 1290,
+        "y": 360,
+        "wires": [
+            [
+                "8a0da5855efbc897",
+                "754d6062473835ca"
+            ]
+        ]
+    },
+    {
+        "id": "0dca08e3d2a58af9",
+        "type": "debug",
+        "z": "25155530bc7a7727",
+        "name": "debug 85",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1780,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "137884b6b2ed1aed",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 1270,
+        "y": 420,
+        "wires": [
+            [
+                "8a0da5855efbc897",
+                "754d6062473835ca"
+            ]
+        ]
+    },
+    {
+        "id": "b3fe15f2945c26f8",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 1270,
+        "y": 460,
+        "wires": [
+            [
+                "8a0da5855efbc897"
+            ]
+        ]
+    },
+    {
+        "id": "754d6062473835ca",
+        "type": "change",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "1",
+                "tot": "num"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1560,
+        "y": 360,
+        "wires": [
+            [
+                "ef0f409b4d8eca5d"
+            ]
+        ]
+    },
+    {
+        "id": "ef0f409b4d8eca5d",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 33",
+        "func": "var valor = msg.payload;\nmsg.payload = {\n    diferencial_temp_bbt: valor\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1830,
+        "y": 340,
+        "wires": [
+            [
+                "ef9f92cefb86b251"
+            ]
+        ]
+    },
+    {
+        "id": "ef9f92cefb86b251",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "DIFERENCIAL_TEMP",
+        "token": "BBUS-YcNR68RGzaAGy8Yd5uwfFFownJ4otq",
+        "label_device": "",
+        "device_label": "tesis",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 2060,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "dcbdc4a8fe6de30a",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "function 34",
+        "func": "var valor = msg.payload;\nmsg.payload = {\n    alarmasg2: valor\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 1020,
+        "wires": [
+            [
+                "195b8b8b75503be1"
+            ]
+        ]
+    },
+    {
+        "id": "c8c2dfc7cb8d20bd",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "RUN BBT",
+        "token": "BBUS-Rb0T86jkVOishbRwCn2udCsBM1hflH",
+        "label_device": "",
+        "device_label": "cds",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 2000,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "056ead74ce52d556",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "ALARMAS_G1",
+        "token": "BBUS-YcNR68RGzaAGy8Yd5uwfFFownJ4otq",
+        "label_device": "",
+        "device_label": "tesis",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 1040,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "195b8b8b75503be1",
+        "type": "ubidots_out",
+        "z": "25155530bc7a7727",
+        "name": "ALARMAS_G2",
+        "token": "BBUS-YcNR68RGzaAGy8Yd5uwfFFownJ4otq",
+        "label_device": "",
+        "device_label": "tesis",
+        "tier": "business",
+        "tls_checkbox": true,
+        "x": 1060,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "ab8614eeeae65d19",
+        "type": "change",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "1",
+                "tot": "num"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 360,
+        "wires": [
+            [
+                "5def661ebae03c66"
+            ]
+        ]
+    },
+    {
+        "id": "44deabf207e27a1c",
+        "type": "inject",
+        "z": "25155530bc7a7727",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 210,
+        "y": 1000,
+        "wires": [
+            [
+                "2e0cb172fa214640",
+                "9354c539301523cc",
+                "97d3871bb73cdff4"
+            ]
+        ]
+    },
+    {
+        "id": "97d3871bb73cdff4",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Evaluar señal y enviar alarma",
+        "func": "if (msg.payload === true) {\n    // Definir los chatIds a los que se enviará el mensaje\n    var chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n    // Recorremos cada chatId y enviamos el mensaje con la foto\n    for (var i = 0; i < chatIds.length; i++) {\n        msg.payload = {\n            chatId: chatIds[i], // Usamos el chatId de la lista\n            type: \"message\",\n                content: \"🚨 ALERTA FERMENTADOR\\nGrupo de alarmas 2 activado.\\n\\n❗️Revise el sistema para continuar con la operación.\"\n            }\n        node.send(msg); // Enviamos el mensaje con la foto\n    }\n    return null; // No necesitamos enviar nada más después del bucle\n} else {\n    return null; // Si no es 1 ni 0, no hace nada\n}\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 1080,
+        "wires": [
+            [
+                "8d6b99b699517d9f",
+                "c3eccb7c4bcd90e7"
+            ]
+        ]
+    },
+    {
+        "id": "512fb4745689f688",
+        "type": "function",
+        "z": "25155530bc7a7727",
+        "name": "Evaluar señal y enviar alarma",
+        "func": "if (msg.payload === true) {\n    // Definir los chatIds a los que se enviará el mensaje\n    var chatIds = [6308328731, -1002636358662]; // Lista de chatIds\n\n    // Recorremos cada chatId y enviamos el mensaje con la foto\n    for (var i = 0; i < chatIds.length; i++) {\n        msg.payload = {\n            chatId: chatIds[i], // Usamos el chatId de la lista\n            type: \"message\",\n                content: \"🚨 ALERTA FERMENTADOR\\nGrupo de alarmas 1 activado.\\n\\n❗️Revise el sistema para continuar con la operación.\"\n            }\n        node.send(msg); // Enviamos el mensaje con la foto\n    }\n    return null; // No necesitamos enviar nada más después del bucle\n} else {\n    return null; // Si no es 1 ni 0, no hace nada\n}\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 1320,
+        "wires": [
+            [
+                "a51277a0a80172fb",
+                "0f8f5bc186378f9a"
+            ]
+        ]
+    },
+    {
+        "id": "2095f41376c7be0b",
+        "type": "telegram bot",
+        "botname": "TesisCerveceria",
+        "usernames": "CAMINODELSOL",
+        "chatids": "-1002636358662",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "addressfamily": "",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "1b2096d84f569c5f",
+        "type": "s7 endpoint",
+        "transport": "iso-on-tcp",
+        "address": "192.168.101.20",
+        "port": "102",
+        "rack": "0",
+        "slot": "1",
+        "localtsaphi": "02",
+        "localtsaplo": "00",
+        "remotetsaphi": "03",
+        "remotetsaplo": "00",
+        "connmode": "rack-slot",
+        "adapter": "",
+        "busaddr": "2",
+        "cycletime": "500",
+        "timeout": "1500",
+        "name": "LOGO! CDS",
+        "vartable": [
+            {
+                "addr": "DB1,X1064.1",
+                "name": "Q02"
+            },
+            {
+                "addr": "DB1,X1064.0",
+                "name": "Q01"
+            },
+            {
+                "addr": "DB1,WORD1036",
+                "name": "AI3"
+            },
+            {
+                "addr": "DB1,X0.0",
+                "name": "NI1"
+            },
+            {
+                "addr": "DB1,WORD1038",
+                "name": "AI4"
+            },
+            {
+                "addr": "DB1,X1064.3",
+                "name": "Q04"
+            },
+            {
+                "addr": "DB20,X1246.6",
+                "name": "NI7"
+            },
+            {
+                "addr": "DB1,WORD1080",
+                "name": "AQ5"
+            },
+            {
+                "addr": "DB1,WORD1262",
+                "name": "NAI5"
+            },
+            {
+                "addr": "DB1,X1064.5",
+                "name": "Q06"
+            },
+            {
+                "addr": "DB1,X1064.6",
+                "name": "Q07"
+            },
+            {
+                "addr": "DB1,WORD1076",
+                "name": "AQ3"
+            },
+            {
+                "addr": "DB1,WORD1078",
+                "name": "AQ4"
+            },
+            {
+                "addr": "DB1,WORD1084",
+                "name": "AQ7"
+            },
+            {
+                "addr": "DB1,WORD1118",
+                "name": "AM1"
+            },
+            {
+                "addr": "DB1,WORD32",
+                "name": "VW32"
+            },
+            {
+                "addr": "DB1,WORD34",
+                "name": "VW34"
+            },
+            {
+                "addr": "DB1,WORD1128",
+                "name": "AM6"
+            },
+            {
+                "addr": "DB1,WORD1130",
+                "name": "AM7 "
+            },
+            {
+                "addr": "DB1,WORD1142",
+                "name": "AM13 "
+            },
+            {
+                "addr": "DB1,WORD1144",
+                "name": "AM14 "
+            },
+            {
+                "addr": "DB1,WORD36",
+                "name": "VW36"
+            },
+            {
+                "addr": "DB1,WORD38",
+                "name": "VW38"
+            },
+            {
+                "addr": "DB1,WORD1150",
+                "name": "AM17 PA"
+            },
+            {
+                "addr": "DB1,WORD1150",
+                "name": "AM18 PA"
+            },
+            {
+                "addr": "DB1,WORD40",
+                "name": "VW40"
+            },
+            {
+                "addr": "DB1,WORD42",
+                "name": "VW42"
+            },
+            {
+                "addr": "DB1,WORD1162",
+                "name": "AM21 EA"
+            },
+            {
+                "addr": "DB1,WORD1164",
+                "name": "AM22 EA"
+            },
+            {
+                "addr": "DB1,WORD44",
+                "name": "VW44"
+            },
+            {
+                "addr": "DB1,WORD46",
+                "name": "VW46"
+            },
+            {
+                "addr": "DB1,WORD1138",
+                "name": "AM11"
+            },
+            {
+                "addr": "DB1,WORD1140",
+                "name": "AM12"
+            },
+            {
+                "addr": "DB1,WORD1146",
+                "name": "AM15"
+            },
+            {
+                "addr": "DB1,WORD1148",
+                "name": "AM16"
+            },
+            {
+                "addr": "DB1,WORD1152",
+                "name": "AM19"
+            },
+            {
+                "addr": "DB1,WORD1154",
+                "name": "AM20"
+            },
+            {
+                "addr": "DB1,WORD1166",
+                "name": "AM23"
+            },
+            {
+                "addr": "DB1,WORD1168",
+                "name": "AM24"
+            },
+            {
+                "addr": "DB1,X1024.1",
+                "name": "I2"
+            },
+            {
+                "addr": "DB1,X1064.2",
+                "name": "Q03"
+            },
+            {
+                "addr": "DB1,X1024.2",
+                "name": "I3"
+            }
+        ]
+    },
+    {
+        "id": "8fdf45360a1a1c4d",
+        "type": "ui_group",
+        "name": "Chiller Data",
+        "tab": "b066a5d7a1db103f",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "f8ca6ca6ee1cb9d4",
+        "type": "ui_group",
+        "name": "Comunicación",
+        "tab": "236190c7ab55d5c3",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "telegram_bot_config",
+        "type": "telegram bot",
+        "botname": "TU_BOT_AQUI",
+        "usernames": "",
+        "chatids": "",
+        "pollinterval": "300",
+        "usesocks": false
+    },
+    {
+        "id": "b066a5d7a1db103f",
+        "type": "ui_tab",
+        "name": "Chiller Monitoring",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "236190c7ab55d5c3",
+        "type": "ui_tab",
+        "name": "Tesis",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
